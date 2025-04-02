@@ -2,7 +2,8 @@
 #define _VGA_BALL_H
 
 #include <linux/ioctl.h>
-#include <stdint.h>
+// #include <stdint.h>
+typedef unsigned int uint32_t;
 typedef struct {
   uint32_t red, green, blue;
 } vga_ball_color_t;
