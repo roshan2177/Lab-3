@@ -96,8 +96,8 @@ int main()
       if (pos_y > screen_height){
         pos_y = 0;
       }
-      uint32_t encoded_red = ((pos_x & 0x3FF) << 8) | colors[0].red;
-      uint32_t encoded_green = ((pos_y & 0x3FF) << 8) | colors[0].green;
+      uint32_t encoded_red = ((pos_x & 0x3FF) << 22) | colors[0].red;
+      uint32_t encoded_green = ((pos_y & 0x3FF) << 22) | colors[0].green;
   
       vga_ball_color_t new_color = {
           .red = encoded_red,
