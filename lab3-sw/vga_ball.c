@@ -36,11 +36,9 @@
 #define DRIVER_NAME "vga_ball"
 
 /* Device registers */
-
-#define XBall_dir(x) (x)
-#define YBall_dir(x) ((x)+1)
-
-
+#define BG_RED(x) (x)
+#define BG_GREEN(x) ((x)+4)
+#define BG_BLUE(x) ((x)+8)
 
 /*
  * Information about our device
@@ -48,7 +46,6 @@
 struct vga_ball_dev {
 	struct resource res; /* Resource: our registers */
 	void __iomem *virtbase; /* Where registers can be accessed in memory */
-		vga_ball_arg_t state; // holds x/y position
         vga_ball_color_t background;
 } dev;
 
@@ -58,9 +55,9 @@ struct vga_ball_dev {
  */
 static void write_background(vga_ball_color_t *background)
 {
-	iowrite8(background->red, BG_RED(dev.virtbase) );
-	iowrite8(background->green, BG_GREEN(dev.virtbase) );
-	iowrite8(background->blue, BG_BLUE(dev.virtbase) );
+	iowrite32(background->red, BG_RED(dev.virtbase) );
+	iowrite32(background->green, BG_GREEN(dev.virtbase) );
+	iowrite32(background->blue, BG_BLUE(dev.virtbase) );
 	dev.background = *background;
 }
 
@@ -73,28 +70,7 @@ static long vga_ball_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
 {
 	vga_ball_arg_t vla;
 
-	
-
-
 	switch (cmd) {
-
-
-	// Inside vga_ball_ioctl()
-	case VGA_BALL_WRITE_POSITION:
-		if (copy_from_user(&vla, (vga_ball_arg_t *) arg, sizeof(vga_ball_arg_t)))
-			return -EACCES;
-
-		iowrite8(vla.position.x, XBall_dir(dev.virtbase));
-		iowrite8(vla.position.y, YBall_dir(dev.virtbase));
-		dev.state.position = vla.position;
-		break;
-
-	case VGA_BALL_READ_POSITION:
-		vla.position = dev.state.position;
-		if (copy_to_user((vga_ball_arg_t *) arg, &vla, sizeof(vga_ball_arg_t)))
-			return -EACCES;
-		break;
-
 	case VGA_BALL_WRITE_BACKGROUND:
 		if (copy_from_user(&vla, (vga_ball_arg_t *) arg,
 				   sizeof(vga_ball_arg_t)))
@@ -135,14 +111,7 @@ static struct miscdevice vga_ball_misc_device = {
  */
 static int __init vga_ball_probe(struct platform_device *pdev)
 {
-		dev.state.position.x = 100;
-		dev.state.position.y = 100;
-		iowrite8(100, XBall_dir(dev.virtbase));
-		iowrite8(100, YBall_dir(dev.virtbase));
-		
-	   
-	   
-	    vga_ball_color_t beige = { 0xf9, 0xe4, 0xb7 };
+	vga_ball_color_t beige = { 0x000000f9, 0x000000e4, 0x000000b7 };
 	int ret;
 
 	/* Register ourselves as a misc device: creates /dev/vga_ball */

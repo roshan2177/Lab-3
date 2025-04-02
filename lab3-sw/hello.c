@@ -40,18 +40,6 @@ void set_background_color(const vga_ball_color_t *c)
   }
 }
 
-void pos_of_ball(uint16_t x, uint16_t y) {
-  vga_ball_arg_t vla;
-  vla.position.x = x;
-  vla.position.y = y;
-
-  if (ioctl(vga_ball_fd, VGA_BALL_WRITE_POSITION, &vla)) {
-    perror("ioctl(VGA_BALL_WRITE_POSITION) failed");
-    return;
-  }
-}
-
-
 int main()
 {
   vga_ball_arg_t vla;
@@ -81,30 +69,51 @@ int main()
 
   printf("initial state: ");
   print_background_color();
-  pos_of_ball(100, 100); //I just set this as the same for everything
-  int pos_x = 100, pos_y = 100;
-  int vel_x = 1, vel_y = 1;
-  set_background_color(&colors[0]);
-  print_background_color();
-  while(1){
-    if (pos_x == 0 && vel_x == -1){
-      vel_x = 1;
-    }
-    if (pos_y == 0 && vel_y == -1){
-      vel_y = 1;
-    }
-    if (pos_y == 1280 && vel_y == 1){
-      vel_y = 1;
-    }
-    if (pos_y == 480 && vel_y == 1){
-      vel_y = 1;
-    }
-    pos_x += vel_x;
-    pos_y += vel_y;
-    pos_of_ball(pos_x, pos_y);
-    usleep(400000);
-  }
+  int pos_x = 100;
+  int pos_y = 100;
+  int vel_x = 1;
+  int vel_y = 1;
+  int screen_width = 640;
+  int screen_height = 480;
+    while(1){
+      if (pos_x == 0 && vel_x == -1){
+        vel_x = 1;
+      }
+      if (pos_y == 0 && vel_y == -1){
+        vel_y = 1;
+      }
+      if (pos_y == screen_width && vel_y == 1){
+        vel_y = 1;
+      }
+      if (pos_y == screen_height && vel_y == 1){
+        vel_y = 1;
+      }
+      pos_x += vel_x;
+      pos_y += vel_y;
+      if (pos_x > screen_width){
+        pos_x = 0;
+      }
+      if (pos_y > screen_height){
+        pos_y = 0;
+      }
+      uint32_t encoded_red = ((pos_x & 0x3FF) << 8) | colors[0].red;
+      uint32_t encoded_green = ((pos_y & 0x3FF) << 8) | colors[0].green;
   
+      vga_ball_color_t new_color = {
+          .red = encoded_red,
+          .green = encoded_green,
+          .blue = colors[0].blue
+      };
+  
+      set_background_color(&new_color);
+      print_background_color();
+
+      usleep(400000);
+    }
+
+
+
+
   for (i = 0 ; i < 24 ; i++) {
     set_background_color(&colors[i % COLORS ]);
     print_background_color();
