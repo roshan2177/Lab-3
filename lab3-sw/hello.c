@@ -82,8 +82,29 @@ int main()
   printf("initial state: ");
   print_background_color();
   pos_of_ball(100, 100); //I just set this as the same for everything
-
-
+  int pos_x = 100, pos_y = 100;
+  int vel_x = 1, vel_y = 1;
+  set_background_color(&colors[0]);
+  print_background_color();
+  while(1){
+    if (pos_x == 0 && vel_x == -1){
+      vel_x = 1;
+    }
+    if (pos_y == 0 && vel_y == -1){
+      vel_y = 1;
+    }
+    if (pos_y == 1280 && vel_y == 1){
+      vel_y = 1;
+    }
+    if (pos_y == 480 && vel_y == 1){
+      vel_y = 1;
+    }
+    pos_x += vel_x;
+    pos_y += vel_y;
+    pos_of_ball(pos_x, pos_y);
+    usleep(400000);
+  }
+  
   for (i = 0 ; i < 24 ; i++) {
     set_background_color(&colors[i % COLORS ]);
     print_background_color();
