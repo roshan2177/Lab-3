@@ -12,12 +12,9 @@
  *        2    | Blue  |  Blue component
  */
 
-//I just commented out the original code so that you can see the changes made 
-
-
 module vga_ball(input logic        clk,
 	        input logic 	   reset,
-		input logic [7:0]  writedata,
+		input logic [32:0]  writedata,
 		input logic 	   write,
 		input 		   chipselect,
 		input logic [2:0]  address,
@@ -30,73 +27,44 @@ module vga_ball(input logic        clk,
    logic [10:0]	   hcount;
    logic [9:0]     vcount;
 
-   //Here is the fist change, added 10 bits to fit the full length of the screen (8 bits for color mapped to the 255)
-   //logic [7:0] 	   background_r, background_g, background_b;
-   reg [9:0] xdir_ball, ydir_ball;
-
+   logic [7:0] 	   background_r, background_g, background_b;
+	
+   logic [10:0] cord_x, cord_y;
+   
 
    vga_counters counters(.clk50(clk), .*);
 
-  always_ff @(posedge clk)
-  //Sets the ball in the left hand coner as a starting position 
-  if (reset) begin
-    xdir_ball <= 10'd100;
-    ydir_ball <= 10'd100;
-  end else if (chipselect && write)
-    //used to control the position of the ball
-    case (address)
-      3'h0 : xdir_ball <= writedata[9:0];
-      3'h1 : ydir_ball <= writedata[9:0];
-    endcase
- 
-  
-
-  
-  always_comb begin
-      //Changed all of the pixel colors off so we display just black 
-      {VGA_R, VGA_G, VGA_B} = {8'd0, 8'd0, 8'd0}; 
-
-      if (VGA_BLANK_n) begin
-          // This starts to draw just a square , we turned on all of the pixel colors so that we get it to display as white
-          if ((hcount >= xdir_ball) && (hcount < xdir_ball + 16) &&
-            (vcount >= ydir_ball) && (vcount < ydir_ball + 16)) begin
-            {VGA_R, VGA_G, VGA_B} = {8'd255, 8'd255, 8'd255};
-            end
-        end
-    end
-
-endmodule
-
-
-
-
-   
-   
-   
-   /*always_ff @(posedge clk)
+   always_ff @(posedge clk)
      if (reset) begin
 	background_r <= 8'h0;
 	background_g <= 8'h0;
 	background_b <= 8'h80;
      end else if (chipselect && write)
        case (address)
-	 3'h0 : background_r <= writedata;
-	 3'h1 : background_g <= writedata;
-	 3'h2 : background_b <= writedata;
+	 3'h0 : background_r <= writedata[7:0];
+	 3'h1 : background_g <= writedata[7:0];
+	 3'h2 : background_b <= writedata[7:0];
+       endcase
+
+       case (address)
+    3'h0: cord_x <= writedata[31:22];
+    3'h1: cord_y <= writedata[31:22];
        endcase
 
    always_comb begin
       {VGA_R, VGA_G, VGA_B} = {8'h0, 8'h0, 8'h0};
       if (VGA_BLANK_n )
-	if (hcount[10:6] == 5'd3 &&
-	    vcount[9:5] == 5'd3)
-	  {VGA_R, VGA_G, VGA_B} = {8'hff, 8'hff, 8'hff};
+	// if (hcount[10:6] == 5'd3 &&
+	//     vcount[9:5] == 5'd3)
+      if ((hcount[10:1] -  cord_x) * (hcount[10:1] - cord_x) + (vcount[9:0] - cord_y) * (vcount[9:0] - cord_y) < 400)
+        
+	          {VGA_R, VGA_G, VGA_B} = {8'hff, 8'hff, 8'hff};
 	else
 	  {VGA_R, VGA_G, VGA_B} =
              {background_r, background_g, background_b};
-   end */
+   end
 	       
-
+endmodule
 
 module vga_counters(
  input logic 	     clk50, reset,
