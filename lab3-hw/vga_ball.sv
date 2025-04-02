@@ -14,7 +14,7 @@
 
 module vga_ball(input logic        clk,
 	        input logic 	   reset,
-		input logic [32:0]  writedata,
+		input logic [31:0]  writedata,
 		input logic 	   write,
 		input 		   chipselect,
 		input logic [2:0]  address,
@@ -39,7 +39,8 @@ module vga_ball(input logic        clk,
 	background_r <= 8'h0;
 	background_g <= 8'h0;
 	background_b <= 8'h80;
-     end else if (chipselect && write)
+     end else if (chipselect && write) begin
+
        case (address)
 	 3'h0 : background_r <= writedata[7:0];
 	 3'h1 : background_g <= writedata[7:0];
@@ -50,6 +51,7 @@ module vga_ball(input logic        clk,
     3'h0: cord_x <= writedata[31:22];
     3'h1: cord_y <= writedata[31:22];
        endcase
+     end
 
    always_comb begin
       {VGA_R, VGA_G, VGA_B} = {8'h0, 8'h0, 8'h0};
