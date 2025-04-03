@@ -116,7 +116,7 @@ int main()
       set_background_color(&new_color);
       print_background_color();
 
-      usleep(40000);
+      usleep(10000);
     }
 
 
