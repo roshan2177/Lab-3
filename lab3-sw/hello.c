@@ -92,12 +92,12 @@ int main()
       }
       pos_x += vel_x;
       pos_y += vel_y;
-      if (pos_x > screen_width){
-        pos_x = 0;
-      }
-      if (pos_y > screen_height){
-        pos_y = 0;
-      }
+      // if (pos_x > screen_width){
+      //   pos_x = 0;
+      // }
+      // if (pos_y > screen_height){
+      //   pos_y = 0;
+      // }
       uint32_t encoded_red = ((pos_x & 0x3FF) << 22) | colors[cnt % COLORS].red;
       uint32_t encoded_green = ((pos_y & 0x3FF) << 22) | colors[cnt % COLORS].green;
       uint32_t encoded_blue = (colors[(cnt + 1) % COLORS].red << 24) | (colors[(cnt + 1) % COLORS].green << 16) | (colors[(cnt + 1) % COLORS].blue << 8) | colors[cnt % COLORS].blue;
