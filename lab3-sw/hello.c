@@ -75,17 +75,19 @@ int main()
   int vel_y = 1;
   int screen_width = 640;
   int screen_height = 480;
+  int r = 20;
+  int cnt = 0;
     while(1){
-      if (pos_x == 0 && vel_x == -1){
+      if (pos_x <= r && vel_x == -1){
         vel_x = 1;
       }
-      if (pos_y == 0 && vel_y == -1){
+      if (pos_y <= 0 && vel_y == -1){
         vel_y = 1;
       }
-      if (pos_y == screen_width && vel_y == 1){
+      if (pos_y >= screen_width - r && vel_y == 1){
         vel_y = 1;
       }
-      if (pos_y == screen_height && vel_y == 1){
+      if (pos_y >= screen_height - r && vel_y == 1){
         vel_y = 1;
       }
       pos_x += vel_x;
@@ -96,13 +98,15 @@ int main()
       if (pos_y > screen_height){
         pos_y = 0;
       }
-      uint32_t encoded_red = ((pos_x & 0x3FF) << 22) | colors[0].red;
-      uint32_t encoded_green = ((pos_y & 0x3FF) << 22) | colors[0].green;
+      uint32_t encoded_red = ((pos_x & 0x3FF) << 22) | colors[cnt % COLORS].red;
+      uint32_t encoded_green = ((pos_y & 0x3FF) << 22) | colors[cnt % COLORS].green;
+      uint32_t encoded_blue = (colors[(cnt + 1) % COLORS].red << 24) | (colors[(cnt + 1) % COLORS].green << 16) | (colors[(cnt + 1) % COLORS].blue << 8) | colors[cnt % COLORS].blue;
   
       vga_ball_color_t new_color = {
           .red = encoded_red,
           .green = encoded_green,
-          .blue = colors[0].blue
+	  .blue = encoded_blue
+          // .blue = colors[cnt % COLORS].blue
       };
   
       set_background_color(&new_color);
