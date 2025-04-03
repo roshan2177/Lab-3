@@ -6,10 +6,11 @@
  *
  * Register map:
  * 
- * Byte Offset  7 ... 0   Meaning
- *        0    |  Red  |  Red component of background color (0-255)
- *        1    | Green |  Green component
- *        2    | Blue  |  Blue component
+ * Byte Offset   31 ... 22      7 ... 0   Meaning
+ *        0    |  Ball cord_X     Red  |  Red component of background color (0-255)
+ *        1    |  Ball cord_Y    Green |  Green component of background
+                  31 ... 8
+ *        2    |  Ball RGB       Blue  |  Blue component of background
  */
 
 module vga_ball(input logic        clk,
