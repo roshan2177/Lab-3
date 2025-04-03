@@ -30,6 +30,8 @@ module vga_ball(input logic        clk,
    logic [7:0] 	   background_r, background_g, background_b;
 	
    logic [10:0] cord_x, cord_y;
+	
+	logic [7:0] ball_r, ball_g, ball_b; 
    
 
    vga_counters counters(.clk50(clk), .*);
@@ -46,11 +48,14 @@ module vga_ball(input logic        clk,
 	 3'h1 : background_g <= writedata[7:0];
 	 3'h2 : background_b <= writedata[7:0];
        endcase
-
-       case (address)
-    3'h0: cord_x <= writedata[31:22];
-    3'h1: cord_y <= writedata[31:22];
-       endcase
+	     if ((vcount[9:0] - cord_y) * (vcount[9:0] - cord_y) > 400)
+	     begin
+	       case (address)
+		    3'h0: cord_x <= writedata[31:22];
+		    3'h1: cord_y <= writedata[31:22];
+		    3'h2: {ball_r, ball_g, ball_b} <= writedata[31:8];
+	       endcase
+	     end
      end
 
    always_comb begin
@@ -59,8 +64,8 @@ module vga_ball(input logic        clk,
 	// if (hcount[10:6] == 5'd3 &&
 	//     vcount[9:5] == 5'd3)
       if ((hcount[10:1] -  cord_x) * (hcount[10:1] - cord_x) + (vcount[9:0] - cord_y) * (vcount[9:0] - cord_y) < 400)
-        
-	          {VGA_R, VGA_G, VGA_B} = {8'hff, 8'hff, 8'hff};
+      		{VGA_R, VGA_G, VGA_B} = {ball_r, ball_g, ball_b};
+	          // {VGA_R, VGA_G, VGA_B} = {8'hff, 8'hff, 8'hff};
 	else
 	  {VGA_R, VGA_G, VGA_B} =
              {background_r, background_g, background_b};
