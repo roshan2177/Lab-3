@@ -80,15 +80,19 @@ int main()
     while(1){
       if (pos_x <= r && vel_x == -1){
         vel_x = 1;
+	      cnt += 1;
       }
-      if (pos_y <= 0 && vel_y == -1){
+      if (pos_y <= r && vel_y == -1){
         vel_y = 1;
+	      cnt += 1;
       }
-      if (pos_y >= screen_width - r && vel_y == 1){
-        vel_y = 1;
+      if (pos_x >= screen_width - r && vel_x == 1){
+        vel_x = -1;
+	      cnt += 1;
       }
       if (pos_y >= screen_height - r && vel_y == 1){
-        vel_y = 1;
+        vel_y = -1;
+	      cnt += 1;
       }
       pos_x += vel_x;
       pos_y += vel_y;
