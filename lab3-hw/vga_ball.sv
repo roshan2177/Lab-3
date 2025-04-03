@@ -8,9 +8,9 @@
  * 
  * Byte Offset   31 ... 22      7 ... 0   Meaning
  *        0    |  Ball cord_X     Red  |  Red component of background color (0-255)
- *        1    |  Ball cord_Y    Green |  Green component of background
+ *        4    |  Ball cord_Y    Green |  Green component of background
                   31 ... 8
- *        2    |  Ball RGB       Blue  |  Blue component of background
+ *        8    |  Ball RGB       Blue  |  Blue component of background
  */
 
 module vga_ball(input logic        clk,
